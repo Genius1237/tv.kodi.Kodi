@@ -1,0 +1,29 @@
+name: "Sync gles branch"
+on:
+  schedule:
+    - cron: "0 0 * * 6"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: Genius1237/gles
+
+          # Important to set this
+          # Otherwise only last git commit is fetched
+          # And git is unaware of all previous commits while rebasing
+          fetch-depth: 0
+      - name: Sync gles branch
+        run: |
+          git config user.name "Anirudh Srinivasan"
+          git config user.email "anirudhsriniv@gmail.com"
+          git remote add flathub https://github.com/flathub/tv.kodi.Kodi/
+          git fetch flathub
+          git rebase flathub/master Genius1237/gles
+          git push -f origin Genius1237/gles
